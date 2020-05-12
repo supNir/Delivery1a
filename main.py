@@ -4,7 +4,6 @@ from flask_login import LoginManager, login_user, logout_user, current_user, log
 from wtforms import StringField, PasswordField, SubmitField, TextAreaField, BooleanField
 from wtforms.validators import DataRequired
 from data import db_session, news, users
-import news_api
 
 app = Flask(__name__)
 db_session.global_init("db/blogs.sqlite")
@@ -39,25 +38,6 @@ class LoginForm(FlaskForm):
 def logout():
     logout_user()
     return redirect('/')
-
-
-@app.route('/news_delete/<int:id>', methods=['GET', 'POST'])
-@login_required
-def news_delete(id):
-    sessions = db_session.create_session()
-    new = sessions.query(news.News).filter(news.News.id == id,
-                                           news.News.user == current_user).first()
-    if new:
-        sessions.delete(new)
-        sessions.commit()
-    else:
-        abort(404)
-    return redirect('/')
-
-
-@app.route('/fake')
-def fake():
-    return render_template('fake.html')
 
 
 @app.route('/login', methods=['GET', 'POST'])
